@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:spotify/app/assets_path.dart';
+import 'package:spotify/features/auth/ui/screens/login_screen.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
-  static final name = '/login';
+  static final name = '/signup';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +39,9 @@ class SignupScreen extends StatelessWidget {
                 OtherSignUpButton(Iconsax.facebook, "Continue with Facebook"),
                 SizedBox(height: 8),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, LoginScreen.name);
+                  },
                   child: Text(
                     "Log in",
                     style: TextStyle(

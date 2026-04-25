@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spotify/app/assets_path.dart';
-import 'package:spotify/app/signup_screen.dart';
+import 'package:spotify/features/auth/ui/screens/signup_screen.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:spotify/app/signup_screen.dart';
+import 'package:spotify/app/main_bottom.dart';
+import 'package:spotify/features/home/ui/screens/home_screen.dart';
+import 'package:spotify/features/auth/ui/screens/login_screen.dart';
+import 'package:spotify/features/auth/ui/screens/signup_screen.dart';
 import 'package:spotify/splashScreen.dart';
 
 class musicify extends StatelessWidget {
@@ -20,6 +23,15 @@ class musicify extends StatelessWidget {
 
         if (settings.name == SignupScreen.name) {
           screenWidget = SignupScreen();
+        }
+        if (settings.name == LoginScreen.name) {
+          screenWidget = LoginScreen();
+        }
+        if (settings.name == HomeScreen.name) {
+          screenWidget = HomeScreen();
+        }
+        if (settings.name == MainBottomNavBar.name) {
+          screenWidget = MainBottomNavBar();
         }
 
         return MaterialPageRoute(builder: (context) => screenWidget);
