@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:spotify/features/home/ui/widgets/album_card.dart';
 import 'package:spotify/features/home/ui/widgets/song_card.dart';
@@ -66,7 +67,11 @@ class HomeScreen extends StatelessWidget {
       children: [
         Text(
           "Made for you",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
+          style: GoogleFonts.kings(
+            fontSize: 40,
+            fontWeight: FontWeight.w700,
+            color: Colors.black,
+          ),
         ),
         Spacer(),
         IconButton(onPressed: () {}, icon: Icon(Iconsax.notification)),
