@@ -1,44 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 
 class MusicDetailScreen extends StatefulWidget {
   const MusicDetailScreen({super.key, required this.songName});
   final String songName;
-  static final name = '/music-details';
+
+  static final name = '/music-detail';
 
   @override
   State<MusicDetailScreen> createState() => _MusicDetailScreenState();
 }
 
 class _MusicDetailScreenState extends State<MusicDetailScreen> {
+  // 1. Create the audio player instance
   final player = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
-    _initAudio();
+    initAudio();
   }
 
-  Future<void> _initAudio() async {
+  void initAudio() async {
     try {
       await player.setUrl(
-        'https://ik.imagekit.io/f0j3unxvhw/Spotify/music/music_1776900998751_92HTAH40C', // Use a known-good MP3 URL
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
       );
     } catch (e) {
-      print('=== AUDIO ERROR ===');
-      print(e);
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to load audio: $e')));
-      }
+      print("Error loading audio: $e");
     }
-  }
-
-  @override
-  void dispose() {
-    player.dispose();
-    super.dispose();
   }
 
   void handlePlayPause() async {
@@ -49,12 +41,27 @@ class _MusicDetailScreenState extends State<MusicDetailScreen> {
     }
   }
 
+  String formatDuration(Duration duration) {
+    final minute = duration.inMinutes.toString();
+    final seconds = (duration.inSeconds % 60).toString().padLeft(2, "0");
+    return "$minute:$seconds";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.songName), centerTitle: true),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+      appBar: AppBar(
+        title: Text(
+          widget.songName,
+          style: GoogleFonts.zillaSlab(
+            fontWeight: FontWeight.bold,
+            fontSize: 26,
+            color: Colors.greenAccent,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -67,22 +74,72 @@ class _MusicDetailScreenState extends State<MusicDetailScreen> {
                   builder: (context, positionSnapshot) {
                     final position = positionSnapshot.data ?? Duration.zero;
                     return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Slider(
-                          min: 0,
-                          max: duration.inMilliseconds.toDouble(),
-                          value: position.inMilliseconds
-                              .clamp(0, duration.inMilliseconds)
-                              .toDouble(),
-                          onChanged: (value) {
-                            player.seek(Duration(milliseconds: value.round()));
-                          },
+                        SizedBox(
+                          height: 350,
+                          child: Image.network(
+                            'https://imgs.search.brave.com/6ZiNrBRApMttX-3_ybT1od7D8ycFVYfzQ6mhfkFEvio/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90aHVt/YnMuZHJlYW1zdGlt/ZS5jb20vYi9ncnVu/Z2UtbXVzaWNhbC1i/YWNrZ3JvdW5kLWdy/dW5nZS1tdXNpY2Fs/LWJhY2tncm91bmQt/b2xkLXBhcGVyLXRl/eHR1cmUtbXVzaWMt/bm90ZXMtMjA3NTM5/ODM3LmpwZw',
+                          ),
+                        ),
+                        SizedBox(height: 30),
+                        SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                            thumbColor: Colors.green,
+
+                            activeTrackColor: Colors.green,
+                          ),
+                          child: Slider(
+                            value: position.inSeconds.toDouble(),
+                            max: duration.inSeconds.toDouble(),
+                            onChanged: (value) {
+                              player.seek(Duration(seconds: value.round()));
+                            },
+                          ),
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(_formatDuration(position)),
-                            Text(_formatDuration(duration)),
+                            Text(
+                              formatDuration(position),
+                              style: GoogleFonts.aDLaMDisplay(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Spacer(),
+                            Text(
+                              formatDuration(duration),
+                              style: GoogleFonts.aDLaMDisplay(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        StreamBuilder<PlayerState>(
+                          stream: player.playerStateStream,
+                          builder: (context, snapshot) {
+                            return play_pause(context);
+                          },
+                        ),
+                        SizedBox(height: 80),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Iconsax.music_play,
+                              color: Colors.green,
+                              size: 42,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              "Playing ${widget.songName}",
+                              style: GoogleFonts.actor(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -91,45 +148,83 @@ class _MusicDetailScreenState extends State<MusicDetailScreen> {
                 );
               },
             ),
-            const SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.skip_previous),
-                  iconSize: 48,
-                  onPressed: () {},
-                ),
-                StreamBuilder<PlayerState>(
-                  stream: player.playerStateStream,
-                  builder: (context, snapshot) {
-                    final playing = snapshot.data?.playing ?? false;
-                    return IconButton(
-                      iconSize: 64,
-                      onPressed: handlePlayPause,
-                      icon: Icon(
-                        playing ? Icons.pause_circle : Icons.play_circle,
-                      ),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.skip_next),
-                  iconSize: 48,
-                  onPressed: () {},
-                ),
-              ],
-            ),
           ],
         ),
       ),
     );
   }
 
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return '$minutes:$seconds';
+  Row play_pause(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Spacer(flex: 6),
+        SizedBox(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              IconButton(
+                onPressed: () {
+                  player.seek(Duration.zero);
+                },
+                icon: Icon(Iconsax.backward, size: 48, color: Colors.green),
+              ),
+              IconButton(
+                onPressed: handlePlayPause,
+                icon: Icon(
+                  player.playing ? Iconsax.pause : Iconsax.play_circle,
+                  size: 48,
+                  color: Colors.green,
+                ),
+              ),
+
+              IconButton(
+                onPressed: () {
+                  player.seek(player.duration ?? Duration.zero);
+                },
+                icon: Icon(Iconsax.forward, size: 48, color: Colors.green),
+              ),
+            ],
+          ),
+        ),
+        Spacer(),
+
+        volume(context),
+      ],
+    );
+  }
+
+  SizedBox volume(BuildContext context) {
+    return SizedBox(
+      width: 100,
+      child: SliderTheme(
+        data: SliderTheme.of(
+          context,
+        ).copyWith(thumbShape: HandleThumbShape(), trackHeight: 14),
+        // data: SliderThemeData(
+        //   thumbShape: RoundSliderOverlayShape(
+        //     overlayRadius: 8,
+        //   ),
+        // ),
+        child: Slider(
+          divisions: 5,
+
+          label: 'Volume',
+          padding: EdgeInsetsGeometry.all(2),
+          value: player.volume,
+          min: 0.0,
+          max: 1.0,
+          onChanged: (value) {
+            setState(() {
+              player.setVolume(value);
+            });
+          },
+          activeColor: Colors.greenAccent,
+          //),
+        ),
+      ),
+    );
   }
 }
