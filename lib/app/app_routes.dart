@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spotify/app/main_bottom.dart';
+import 'package:spotify/features/common/ui/screens/main_bottom.dart';
 import 'package:spotify/features/album/ui/screens/album_list_screen.dart';
 import 'package:spotify/features/auth/ui/screens/login_screen.dart';
 import 'package:spotify/features/auth/ui/screens/signup_screen.dart';

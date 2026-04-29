@@ -37,6 +37,7 @@ dependencies:
   iconsax_flutter: ^1.0.1
   google_fonts: ^8.0.2
   just_audio: ^0.10.5
+  provider: ^6.1.5+1
 
 dev_dependencies:
   flutter_test:
