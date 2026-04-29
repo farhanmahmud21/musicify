@@ -67,10 +67,10 @@ class HomeScreen extends StatelessWidget {
       children: [
         Text(
           "Made for you",
-          style: GoogleFonts.kings(
+          style: GoogleFonts.almendra(
             fontSize: 40,
-            fontWeight: FontWeight.w700,
-            color: Colors.black,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
           ),
         ),
         Spacer(),

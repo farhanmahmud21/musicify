@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:spotify/features/music/ui/screens/music_detail.dart';
 
 class MusicListScreen extends StatelessWidget {
   const MusicListScreen({super.key});
   static final name = '/album-list';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,24 +28,34 @@ class MusicListScreen extends StatelessWidget {
         automaticallyImplyActions: false,
       ),
       body: ListView.separated(
-        itemBuilder: (context, index) => ListTile(
-          title: Text('Song Name'),
-          leading: Icon(Iconsax.music_copy),
-          subtitle: Text(
-            'Artist Name',
-            style: TextStyle(color: Colors.grey, fontSize: 12),
-          ),
+        itemBuilder: (context, index) => InkWell(
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              MusicDetailScreen.name,
+              arguments: 'Song Name $index',
+            );
+          },
 
-          iconColor: Colors.amberAccent,
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(Iconsax.music_library_2, size: 22),
-              SizedBox(width: 4),
-              Text('Album Name'),
-            ],
+          child: ListTile(
+            title: Text('Song Name $index'),
+            leading: Icon(Iconsax.music_copy),
+            subtitle: Text(
+              'Artist Name',
+              style: TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+
+            iconColor: Colors.amberAccent,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Iconsax.music_library_2, size: 22),
+                SizedBox(width: 4),
+                Text('Album Name'),
+              ],
+            ),
           ),
         ),
         separatorBuilder: (context, index) => Divider(),
